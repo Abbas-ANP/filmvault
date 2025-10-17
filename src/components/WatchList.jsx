@@ -1,8 +1,11 @@
 import { FaArrowUpLong, FaArrowDownLong } from "react-icons/fa6";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AppContext } from "../App";
 import genreArr from "./genres";
 
-const WatchList = ({ watchList, setWatchList }) => {
+const WatchList = () => {
+  const { watchList, setWatchList } = useContext(AppContext);
+
   const [search, setSearch] = useState("");
   const [genreList, setGenreList] = useState(["All Genres"]);
   const [currGenre, setCurrGenre] = useState("All Genres");
@@ -146,7 +149,12 @@ const WatchList = ({ watchList, setWatchList }) => {
               })}
           </tbody>
         </table>
+        
       </div>
+
+      {watchList.length === 0 && (
+                <div className="text-center mt-40 text-2xl">Add movies to Watch List</div>
+      )}
     </>
   );
 };

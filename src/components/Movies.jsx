@@ -1,10 +1,12 @@
 import MovieCard from "./Moviecard";
+import Banner from "./Banner";
 import Pages from "./Pages";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AppContext } from "../App";
 import axios from "axios";
 
-// eslint-disable-next-line no-unused-vars
-const Movies = ({ watchList, setWatchList,  handleAdd, handleRemove }) => {
+const Movies = () => {
+  const { watchList, handleAdd, handleRemove } = useContext(AppContext);
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
 
@@ -20,7 +22,8 @@ const Movies = ({ watchList, setWatchList,  handleAdd, handleRemove }) => {
 
   return (
     <>
-      <h1 className="text-center mt-6 text-xl font-bold">Trending Movies</h1>
+      <Banner movies={movies} />
+      <h1 className="text-center text-xl font-bold">Trending Movies</h1>
       <div className="m-8 flex flex-wrap gap-x-10 justify-around">
         {movies.map((movie) => {
           return <MovieCard movie={movie} key={movie.id} poster={movie.poster_path} title={movie.title} watchList={watchList} handleAdd={handleAdd} handleRemove={handleRemove} />;

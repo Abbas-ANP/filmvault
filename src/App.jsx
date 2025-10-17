@@ -2,8 +2,11 @@ import Navbar from "./components/Navbar";
 import Movies from "./components/Movies";
 import WatchList from "./components/WatchList";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext } from "react";
 import Banner from "./components/Banner";
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const AppContext = createContext();
 
 const App = () => {
   let [watchList, setWatchList] = useState([]);
@@ -12,7 +15,6 @@ const App = () => {
     let newWatchList = [...watchList, movie];
     localStorage.setItem("moviesApp", JSON.stringify(newWatchList));
     setWatchList(newWatchList);
-    console.log(newWatchList);
   };
 
   const handleRemove = (currMov) => {
@@ -21,7 +23,6 @@ const App = () => {
     });
     localStorage.setItem("moviesApp", JSON.stringify(filteredWatchList));
     setWatchList(filteredWatchList);
-    console.log(filteredWatchList);
   };
 
   useEffect(() => {
@@ -31,29 +32,24 @@ const App = () => {
 
   return (
     <>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Banner />
-                <Movies
-                  watchList={watchList}
-                  setWatchList={setWatchList}
-                  handleAdd={handleAdd}
-                  handleRemove={handleRemove}
-                />
-              </>
-            }
-          />
-          <Route
-            path="/watchlist"
-            element={<WatchList watchList={watchList} setWatchList={setWatchList} />}
-          />
-        </Routes>
-      </BrowserRouter>
+      <AppContext.Provider
+        value={{ watchList, setWatchList, handleAdd, handleRemove }}
+      >
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <Movies />
+                </>
+              }
+            />
+            <Route path="/watchlist" element={<WatchList />} />
+          </Routes>
+        </BrowserRouter>
+      </AppContext.Provider>
     </>
   );
 };

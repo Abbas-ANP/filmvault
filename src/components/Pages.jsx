@@ -1,15 +1,25 @@
 import { FaLongArrowAltRight, FaLongArrowAltLeft } from "react-icons/fa";
+import { useEffect } from "react";
 
 const Pages = ({ page, setPage }) => {
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
+
   return (
     <>
-      <div className='bg-gray-600 bg-opacity-80 text-white font-bold flex justify-center items-center mb-6'>
-        <div className="p-3 w-[55px] rounded-xl pl-5 hover:bg-black" onClick={() => setPage((page==1) ? 1 : page-1)}><FaLongArrowAltLeft /></div>
-        <div className="p-5">{page}</div>
-        <div className="p-3 w-[55px]  rounded-xl pl-5 hover:bg-black" onClick={() => {setPage(page+1)}}><FaLongArrowAltRight /></div>
+      <div className='bg-blue-500 text-white font-bold flex justify-center items-center mb-5'>
+        <div className="p-2 w-[55px] rounded-xl pl-5 hover:bg-white hover:text-blue-500 transition active:-translate-x-2 text-xl cursor-pointer" onClick={() => setPage((page==1) ? 1 : page-1)}><FaLongArrowAltLeft /></div>
+        <div className="p-4 text-xl">{page}</div>
+        <div className="p-2 w-[55px] rounded-xl pl-5 hover:bg-white hover:text-blue-500 transition active:translate-x-2 text-xl" onClick={() => {setPage(page+1)}}><FaLongArrowAltRight /></div>
       </div>
-      <div onClick={() => setPage(1)}>Back to Page 1</div>
+
+      <div className="text-center font-bold mb-4">
+        {page !== 1 && (
+        <button onClick={() => setPage(1)} className="ml-2">Back to Home</button>
+      )}
+      </div>
     </>
   )
 }

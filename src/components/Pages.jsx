@@ -9,10 +9,10 @@ const Pages = ({ page, setPage }) => {
 
   return (
     <>
-      <div className='bg-blue-500 text-white font-bold flex justify-center items-center mb-5'>
-        <div className="p-2 w-[55px] rounded-xl pl-5 hover:bg-white hover:text-blue-500 transition active:-translate-x-2 text-xl cursor-pointer" onClick={() => setPage((page==1) ? 1 : page-1)}><FaLongArrowAltLeft /></div>
+      <div className='bg-black text-white font-bold flex justify-center items-center mb-5'>
+        <div className="p-2 w-[55px] rounded-xl pl-5 hover:bg-white hover:text-black transition active:-translate-x-2 text-xl cursor-pointer" onClick={() => setPage((page==1) ? 1 : page-1)}><FaLongArrowAltLeft /></div>
         <div className="p-4 text-xl">{page}</div>
-        <div className="p-2 w-[55px] rounded-xl pl-5 hover:bg-white hover:text-blue-500 transition active:translate-x-2 text-xl" onClick={() => {setPage(page+1)}}><FaLongArrowAltRight /></div>
+        <div className="p-2 w-[55px] rounded-xl pl-5 hover:bg-white hover:text-black transition active:translate-x-2 text-xl" onClick={() => {setPage(page+1)}}><FaLongArrowAltRight /></div>
       </div>
 
       <div className="text-center font-bold mb-4">

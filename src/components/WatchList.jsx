@@ -63,8 +63,8 @@ const WatchList = () => {
               onClick={() => handleCurrGenre(genre)}
               className={
                 currGenre == genre
-                  ? "flex items-center justify-center bg-blue-400 w-[120px] h-[40px] font-bold text-white rounded-xl mx-2 cursor-pointer"
-                  : "flex items-center justify-center bg-gray-400/50 w-[120px] h-[40px] font-bold text-white rounded-xl mx-2 cursor-pointer"
+                  ? "flex items-center justify-center mb-[5px] bg-blue-400 w-[120px] h-[40px] font-bold text-white rounded-xl mx-2 cursor-pointer"
+                  : "flex items-center justify-center mb-[5px] bg-gray-400/50 w-[120px] h-[40px] font-bold text-white rounded-xl mx-2 cursor-pointer"
               }
             >
               {genre}

@@ -1,4 +1,4 @@
-import MovieCard from "./Moviecard";
+import MovieCard from "./MovieCard";
 import Banner from "./Banner";
 import Pages from "./Pages";
 import { useState, useEffect, useContext } from "react";

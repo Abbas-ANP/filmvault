@@ -1,162 +1,333 @@
-import { FaArrowUpLong, FaArrowDownLong } from "react-icons/fa6";
+import { FaArrowUpLong, FaArrowDownLong, FaTrash } from "react-icons/fa6";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../App";
 import genreArr from "./genres";
 
 const WatchList = () => {
-  const { watchList, setWatchList } = useContext(AppContext);
+    const { watchList, setWatchList } = useContext(AppContext);
 
-  const [search, setSearch] = useState("");
-  const [genreList, setGenreList] = useState(["All Genres"]);
-  const [currGenre, setCurrGenre] = useState("All Genres");
+    const [search, setSearch] = useState("");
+    const [genreList, setGenreList] = useState(["All Genres"]);
+    const [currGenre, setCurrGenre] = useState("All Genres");
 
-  const handleCurrGenre = (genre) => {
-    setCurrGenre(genre);
-  };
+    useEffect(() => {
+        const genres = watchList.map(
+            (movie) =>
+                genreArr.find((g) => g.id === movie.genre_ids[0])?.name ||
+                "Unknown",
+        );
 
-  useEffect(() => {
-    let genres = watchList.map((movie) => {
-      return (
-        genreArr.find((g) => g.id === movie.genre_ids[0])?.name || "Unknown"
-      );
-    });
-    genres = new Set(genres);
-    setGenreList(["All Genres", ...genres]);
-  }, [watchList]);
+        setGenreList(["All Genres", ...new Set(genres)]);
+    }, [watchList]);
 
-  let handleSearch = (e) => {
-    setSearch(e.target.value);
-  };
+    const handleDelete = (movie) => {
+        const updated = watchList.filter(
+            (currMovie) => currMovie.id !== movie.id,
+        );
 
-  // Remember to always copy array before sorting
-  const sortAscend = () => {
-    let sortedAscend = [...watchList].sort((current, next) => {
-      return current.vote_average - next.vote_average;
-    });
+        localStorage.setItem("moviesApp", JSON.stringify(updated));
 
-    setWatchList([...sortedAscend]);
-  };
+        setWatchList(updated);
+    };
 
-  const sortDescend = () => {
-    let sortedDescend = [...watchList].sort((current, next) => {
-      return next.vote_average - current.vote_average;
-    });
+    const sortAscend = () => {
+        setWatchList(
+            [...watchList].sort((a, b) => a.vote_average - b.vote_average),
+        );
+    };
 
-    setWatchList([...sortedDescend]);
-  };
+    const sortDescend = () => {
+        setWatchList(
+            [...watchList].sort((a, b) => b.vote_average - a.vote_average),
+        );
+    };
 
-  let handleDelete = (movie) => {
-    let deletedWatchList = watchList.filter((currMovie) => {
-      return movie.id !== currMovie.id;
-    });
-    localStorage.setItem("moviesApp", JSON.stringify(deletedWatchList));
-    setWatchList([...deletedWatchList]);
-  };
+    const filteredMovies = watchList
+        .filter((movie) => {
+            if (currGenre === "All Genres") return true;
 
-  return (
-    <>
-      <div className="flex justify-center flex-wrap m-6">
-        {genreList.map((genre) => {
-          return (
-            <div
-              key={genre}
-              onClick={() => handleCurrGenre(genre)}
-              className={
-                currGenre == genre
-                  ? "flex items-center justify-center mb-[5px] bg-blue-400 w-[120px] h-[40px] font-bold text-white rounded-xl mx-2 cursor-pointer"
-                  : "flex items-center justify-center mb-[5px] bg-gray-400/50 w-[120px] h-[40px] font-bold text-white rounded-xl mx-2 cursor-pointer"
-              }
+            return (
+                genreArr.find((g) => g.id === movie.genre_ids[0])?.name ===
+                currGenre
+            );
+        })
+        .filter((movie) =>
+            movie.title.toLowerCase().includes(search.toLowerCase()),
+        );
+
+    return (
+        <div
+            className="
+      min-h-screen
+      pb-32
+      p-8
+      text-white
+    "
+        >
+            {/* Title */}
+            <h1
+                className="
+        mb-10
+        text-center
+        text-4xl
+        font-bold
+      "
             >
-              {genre}
+                My WatchList
+            </h1>
+
+            {/* Genres */}
+            <div
+                className="
+        mb-10
+        flex
+        flex-wrap
+        justify-center
+        gap-3
+      "
+            >
+                {genreList.map((genre) => (
+                    <button
+                        key={genre}
+                        onClick={() => setCurrGenre(genre)}
+                        className={`
+              rounded-full
+              px-5
+              py-2
+              font-semibold
+              transition-all
+              duration-300
+
+              ${
+                  currGenre === genre
+                      ? "bg-blue-600 scale-105"
+                      : "bg-white/20 hover:bg-white/30"
+              }
+            `}
+                    >
+                        {genre}
+                    </button>
+                ))}
             </div>
-          );
-        })}
-      </div>
 
-      <div className="flex flex-col items-center m-6">
-        <input
-          onChange={handleSearch}
-          value={search}
-          className="w-60 h-10 bg-zinc p-3 mb-5 text-black outline-none"
-          style={{ backgroundColor: "rgba(223, 223, 223, 1)" }}
-          placeholder="Search Movie"
-        />
-      </div>
+            {/* Search + Sort */}
+            <div
+                className="
+        mb-8
+        flex
+        flex-wrap
+        items-center
+        justify-between
+        gap-5
+      "
+            >
+                <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search movie..."
+                    className="
+            w-72
+            rounded-xl
+            bg-white/90
+            px-4
+            py-3
+            text-black
+            outline-none
+          "
+                />
 
-      <div className="border rounded-lg overflow-hidden m-4">
-        <table className="border w-full">
-          <thead className="bg-gray-100/70 h-10">
-            <tr>
-              <th className="w-1/2">Movie</th>
-              <th className="flex flex-row justify-center items-center">
-                <div className="p-2 cursor-pointer" onClick={sortAscend}>
-                  <FaArrowUpLong />
+                <div
+                    className="
+          flex
+          items-center
+          gap-3
+          rounded-xl
+          bg-white/10
+          p-2
+          backdrop-blur-md
+        "
+                >
+                    <button
+                        onClick={sortAscend}
+                        className="
+              rounded-lg
+              p-3
+              transition
+              hover:bg-white/20
+            "
+                    >
+                        <FaArrowUpLong />
+                    </button>
+
+                    <span className="font-bold">Rating</span>
+
+                    <button
+                        onClick={sortDescend}
+                        className="
+              rounded-lg
+              p-3
+              transition
+              hover:bg-white/20
+            "
+                    >
+                        <FaArrowDownLong />
+                    </button>
                 </div>
-                <div className="p-2">Ratings</div>
-                <div className="p-2 cursor-pointer" onClick={sortDescend}>
-                  <FaArrowDownLong />
-                </div>
-              </th>
-              <th>Popularity</th>
-              <th>Genre</th>
-              <th></th>
-            </tr>
-          </thead>
+            </div>
 
-          <tbody className="border">
-            {watchList
-              .filter((movie) => {
-                if (currGenre === "All Genres") return true;
-                return (
-                  genreArr.find((g) => g.id === movie.genre_ids[0])?.name ===
-                  currGenre
-                );
-              })
-              .filter((movie) => {
-                return movie.title
-                  .toLowerCase()
-                  .includes(search.toLocaleLowerCase());
-              })
-              .map((movie) => {
-                return (
-                  <tr key={movie.id} className="text-center border">
-                    <td>
-                      <div className="flex items-center ">
-                        <img
-                          className="w-15 h-20 m-5"
-                          src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
-                        />
-                        <div>{movie.title}</div>
-                      </div>
-                    </td>
-                    <td>{Math.round(movie.vote_average * 10) / 10}</td>
-                    <td>{Math.round(movie.popularity * 100) / 100}</td>
-                    <td>
-                      {genreArr.find((genre) => genre.id === movie.genre_ids[0])
-                        ?.name || "Unknown"}
-                    </td>
+            {/* Movie Container */}
+            <div
+                className="
+        min-h-[50vh]
+        overflow-hidden
+        rounded-2xl
+        border
+        border-white/10
+        bg-white/10
+        backdrop-blur-lg
+      "
+            >
+                {filteredMovies.length === 0 ? (
+                    <div
+                        className="
+              flex
+              h-[50vh]
+              items-center
+              justify-center
+              text-2xl
+              text-gray-300
+            "
+                    >
+                        Add movies to your WatchList
+                    </div>
+                ) : (
+                    filteredMovies.map((movie) => (
+                        <div
+                            key={movie.id}
+                            className="
+                flex
+                items-center
+                justify-between
+                border-b
+                border-white/10
+                px-6
+                py-7
+                transition-all
+                duration-300
+                hover:bg-white/10
+                hover:scale-[1.01]
+              "
+                        >
+                            {/* Movie Info */}
+                            <div
+                                className="
+                flex
+                w-[65%]
+                items-center
+                gap-6
+              "
+                            >
+                                <img
+                                    className="
+                    h-28
+                    w-20
+                    rounded-lg
+                    object-cover
+                    shadow-lg
+                  "
+                                    src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+                                />
 
-                    <td className="text-red-700">
-                      <span
-                        onClick={() => handleDelete(movie)}
-                        className="cursor-pointer"
-                      >
-                        Delete
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
-        
-      </div>
+                                <div
+                                    className="
+                  flex
+                  flex-col
+                  gap-2
+                "
+                                >
+                                    <h2
+                                        className="
+                    text-xl
+                    font-bold
+                  "
+                                    >
+                                        {movie.title}
+                                    </h2>
 
-      {watchList.length === 0 && (
-                <div className="text-center mt-40 text-2xl">Add movies to Watch List</div>
-      )}
-    </>
-  );
+                                    <p
+                                        className="
+                    text-blue-300
+                  "
+                                    >
+                                        {genreArr.find(
+                                            (g) => g.id === movie.genre_ids[0],
+                                        )?.name || "Unknown"}
+                                    </p>
+
+                                    <p
+                                        className="
+                    max-w-xl
+                    overflow-hidden
+                    text-sm
+                    leading-relaxed
+                    text-gray-300
+                  "
+                                    >
+                                        {movie.overview}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Stats */}
+                            <div
+                                className="
+                flex
+                w-[35%]
+                items-center
+                justify-end
+                gap-8
+              "
+                            >
+                                <div
+                                    className="
+                  min-w-40
+                  rounded-full
+                  bg-yellow-400
+                  px-4
+                  py-2
+                  text-center
+                  font-bold
+                  text-black
+                "
+                                >
+                                    Rating: {movie.vote_average.toFixed(1)}
+                                </div>
+
+                                <div>
+                                    Popularity: {movie.popularity.toFixed(0)}
+                                </div>
+
+                                <button
+                                    onClick={() => handleDelete(movie)}
+                                    className="
+                    rounded-full
+                    bg-red-500/20
+                    p-3
+                    text-red-400
+                    transition
+                    hover:bg-red-500
+                    hover:text-white
+                  "
+                                >
+                                    <FaTrash />
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default WatchList;
